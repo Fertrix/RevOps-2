@@ -22,6 +22,7 @@ import { ModalOverage } from "@/components/modal-overage";
 import { GodModePanel } from "@/components/panel-god-mode";
 import { SentinelTerminal } from "@/components/sentinel-terminal";
 import { PanelSimulator } from "@/components/panel-simulator";
+import { ModalDemoLink } from "@/components/modal-demo-link";
 import { Button } from "@/components/ui/button";
 import { AlertTriangleIcon } from "lucide-react";
 import React from "react";
@@ -38,6 +39,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
 		runIntegrityAudit,
 		selectedClient,
 		agencyName,
+		demoLinkModalOpen,
 	} = useAppContext();
 
 	const renderContent = () => {
@@ -135,6 +137,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
 			{zoomOpen && <ModalZoom />}
 			{recoveryDraftOpen && <ModalRecovery />}
 			{overageLogOpen && <ModalOverage />}
+			{demoLinkModalOpen && <ModalDemoLink />}
 		</SidebarProvider>
 	);
 }

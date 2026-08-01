@@ -96,6 +96,8 @@ interface AppContextProps {
 	setGodModeOpen: (open: boolean) => void;
 	simulatorOpen: boolean;
 	setSimulatorOpen: (open: boolean) => void;
+	demoLinkModalOpen: boolean;
+	setDemoLinkModalOpen: (open: boolean) => void;
 
 	// Selection states for bulk actions
 	selectedLeakIds: string[];
@@ -162,6 +164,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 	const [overageLogOpen, setOverageLogOpen] = useState(false);
 	const [godModeOpen, setGodModeOpen] = useState(false);
 	const [simulatorOpen, setSimulatorOpen] = useState(false);
+	const [demoLinkModalOpen, setDemoLinkModalOpen] = useState(false);
 
 	// Bulk selections
 	const [selectedLeakIds, setSelectedLeakIds] = useState<string[]>([]);
@@ -421,6 +424,8 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 				setGodModeOpen,
 				simulatorOpen,
 				setSimulatorOpen,
+				demoLinkModalOpen,
+				setDemoLinkModalOpen,
 				selectedLeakIds,
 				setSelectedLeakIds,
 				selectedAlertIds,

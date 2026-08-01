@@ -10,6 +10,7 @@ import {
 	FileWarningIcon,
 	DatabaseIcon,
 	SlidersIcon,
+	LinkIcon,
 } from "lucide-react";
 import React from "react";
 
@@ -23,6 +24,7 @@ export function GodModePanel() {
 		setLeaks,
 		setChurnAlerts,
 		setSimulatorOpen,
+		setDemoLinkModalOpen,
 		addLog,
 		niche,
 	} = useAppContext();
@@ -199,16 +201,29 @@ export function GodModePanel() {
 			<div className="bg-muted/15 p-3.5 border-t flex flex-col gap-2">
 				<Button
 					onClick={() => {
+						setDemoLinkModalOpen(true);
+						setGodModeOpen(false);
+					}}
+					className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs gap-1.5 py-1.5 shadow-sm"
+				>
+					<LinkIcon className="size-3.5" />
+					Open Demo URL Link Generator
+				</Button>
+
+				<Button
+					onClick={() => {
 						setSimulatorOpen(true);
 						setGodModeOpen(false);
 					}}
-					className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-xs gap-1.5 py-1.5"
+					variant="outline"
+					className="w-full font-bold text-xs gap-1.5 py-1.5 hover:bg-muted/40"
 				>
 					<SlidersIcon className="size-3.5" />
 					Open Client Portfolio Simulator
 				</Button>
-				<div className="text-[10px] text-muted-foreground text-center">
-					Toggle scenarios or open custom simulator console to test client reactiveness.
+
+				<div className="text-[10px] text-muted-foreground text-center mt-0.5">
+					Generate shareable demo links or simulate live contract deviations.
 				</div>
 			</div>
 		</div>
