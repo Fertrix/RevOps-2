@@ -56,9 +56,9 @@ function AgencyLogo({ agencyName, agencyDomain }: { agencyName: string; agencyDo
 				alt={`${agencyName} Logo`}
 				onError={(e) => {
 					const img = e.currentTarget;
-					if (!img.dataset.triedGoogle) {
-						img.dataset.triedGoogle = "true";
-						img.src = `https://www.google.com/s2/favicons?sz=128&domain=${cleanDomain}`;
+					if (!img.dataset.triedClearbit) {
+						img.dataset.triedClearbit = "true";
+						img.src = `https://logo.clearbit.com/${cleanDomain}`;
 					} else {
 						setImageError(true);
 					}
