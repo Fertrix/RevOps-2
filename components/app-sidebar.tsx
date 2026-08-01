@@ -45,30 +45,26 @@ const directoryClients = [
 function AgencyLogo({ agencyName, agencyDomain }: { agencyName: string; agencyDomain: string }) {
 	const [imageError, setImageError] = useState(false);
 
-	const initials = agencyName
-		.split(/\s+/)
-		.map((w) => w[0])
-		.join("")
-		.toUpperCase()
-		.slice(0, 2);
+	const cleanDomain = agencyDomain
+		? agencyDomain.replace(/^https?:\/\//, "").replace(/\/.*$/, "").trim()
+		: "";
 
-	if (agencyDomain && !imageError) {
-		const logoUrl = `https://www.google.com/s2/favicons?sz=128&domain=${agencyDomain}`;
+	if (cleanDomain && !imageError) {
 		return (
 			<img
-				src={logoUrl}
+				src={`https://unavatar.io/${cleanDomain}?fallback=false`}
 				alt={`${agencyName} Logo`}
-				onError={() => setImageError(true)}
+				onError={(e) => {
+					const img = e.currentTarget;
+					if (!img.dataset.triedGoogle) {
+						img.dataset.triedGoogle = "true";
+						img.src = `https://www.google.com/s2/favicons?sz=128&domain=${cleanDomain}`;
+					} else {
+						setImageError(true);
+					}
+				}}
 				className="size-5 rounded-md object-contain shrink-0 border border-stone-800 bg-muted/40"
 			/>
-		);
-	}
-
-	if (agencyName !== "Your Agency") {
-		return (
-			<div className="size-5 rounded-md bg-primary/15 text-primary border border-primary/20 flex items-center justify-center text-[10px] font-extrabold font-sans shrink-0 uppercase select-none">
-				{initials}
-			</div>
 		);
 	}
 
