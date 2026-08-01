@@ -26,7 +26,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatedCheck } from "@/components/ui/custom-checkbox";
 
-const getDraftEmail = (id: string, client: string, amount: number, type: string, agencyName: string = "Your Agency") => {
+const getDraftEmail = (id: string, client: string, amount: number, type: string, agencyName: string = "Your Agency", firstName: string = "Jack Sterling") => {
 	if (id.startsWith("L_SIM")) {
 		return `Dear ${client} Team,
 
@@ -35,7 +35,7 @@ Our billing audit parser has identified several unbilled engineering deliverable
 We have prepared a draft invoice of $${amount.toLocaleString()}. You can review and authorize the payment here: https://stripe.com/pay/inv_sim_${id.toLowerCase()}
 
 Best regards,
-Jack Sterling
+${firstName}
 CEO, ${agencyName}`;
 	}
 
@@ -49,7 +49,7 @@ We have processed the telemetry audit for June's creative deliverables. Our trac
 We have prepared a draft invoice of $${amount.toLocaleString()}. You can review and authorize the transaction at: https://stripe.com/pay/inv_apex_9943
 
 Best regards,
-Jack Sterling
+${firstName}
 CEO, ${agencyName}`;
 		case "L2":
 			return `Dear Helix Corp Team,
@@ -59,7 +59,7 @@ Our system detected custom Figma high-fidelity icon sets (Figma ID #4812) reques
 We have appended the invoice draft below for your review. Transaction link: https://stripe.com/pay/inv_helix_4812
 
 Best regards,
-Jack Sterling
+${firstName}
 CEO, ${agencyName}`;
 		case "L3":
 			return `Dear Nova Soft Team,
@@ -69,7 +69,7 @@ We have processed the integration log audit. As requested via Slack, our develop
 Review and approve invoice draft at: https://stripe.com/pay/inv_nova_a81c
 
 Best regards,
-Jack Sterling
+${firstName}
 CEO, ${agencyName}`;
 	}
 };
@@ -131,6 +131,7 @@ export function ModalRecovery() {
 		recoveryShowAllLeaksOverride,
 		setRecoveryShowAllLeaksOverride,
 		agencyName,
+		firstName,
 	} = useAppContext();
 
 	const [searchOpen, setSearchOpen] = useState(false);
@@ -191,7 +192,8 @@ export function ModalRecovery() {
 					activeLeakToShow.client,
 					activeLeakToShow.amount,
 					activeLeakToShow.type,
-					agencyName
+					agencyName,
+					firstName
 				)
 			);
 			setIsEditing(false);

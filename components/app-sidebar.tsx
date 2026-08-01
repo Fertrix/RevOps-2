@@ -29,6 +29,7 @@ import {
 	ChevronRightIcon,
 	SearchIcon,
 	XIcon,
+	UserIcon,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -83,6 +84,7 @@ export function AppSidebar() {
 		setSelectedClient,
 		agencyName,
 		agencyDomain,
+		firstName,
 	} = useAppContext();
 
 	const [clientsFlyoutOpen, setClientsFlyoutOpen] = useState(false);
@@ -365,20 +367,18 @@ export function AppSidebar() {
 					
 					{/* CEO User Profile Details */}
 					<div className="flex items-center gap-2 min-w-0 flex-1 group-data-[collapsible=icon]:hidden animate-in fade-in duration-200">
-						<img
-							src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&fit=crop&auto=format&q=80"
-							alt="Jack Sterling"
-							className="size-8 rounded-full object-cover border border-stone-800"
-						/>
+						<div className="size-8 rounded-full bg-stone-800/80 border border-stone-700/80 flex items-center justify-center text-muted-foreground shrink-0 shadow-inner">
+							<UserIcon className="size-4 text-stone-400" />
+						</div>
 						<div className="flex flex-col text-[10px] min-w-0 leading-tight">
 							<span className="font-semibold text-foreground truncate">
-								Jack Sterling
+								{firstName}
 							</span>
 							<span className="text-muted-foreground font-medium text-[9px] truncate mt-0.5">
 								CEO
 							</span>
 							<span className="text-muted-foreground/60 text-[8px] truncate mt-0.5">
-								ceo@artificiallyhub.com
+								{firstName.toLowerCase().replace(/\s+/g, ".")}@{agencyDomain || "artfullyhub.com"}
 							</span>
 						</div>
 					</div>

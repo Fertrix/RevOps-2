@@ -131,6 +131,7 @@ interface AppContextProps {
 	agencyDomain: string;
 	employeesCount: number;
 	niche: "dev" | "design" | "marketing";
+	firstName: string;
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -220,6 +221,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 	const [agencyDomain, setAgencyDomain] = useState<string>("");
 	const [employeesCount, setEmployeesCount] = useState<number>(25);
 	const [niche, setNiche] = useState<"dev" | "design" | "marketing">("marketing");
+	const [firstName, setFirstName] = useState<string>("Jack Sterling");
 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
@@ -229,6 +231,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 			let domainParam = params.get("domain");
 			let employeesParam = params.get("employees");
 			let nicheParam = params.get("niche");
+			let firstNameParam = params.get("firstName") || params.get("firstname") || params.get("name");
 
 			const demoToken = params.get("demo") || params.get("d") || params.get("token");
 			if (demoToken) {
@@ -241,12 +244,14 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 						if (json.domain) domainParam = json.domain;
 						if (json.employees) employeesParam = json.employees.toString();
 						if (json.niche) nicheParam = json.niche;
+						if (json.firstName) firstNameParam = json.firstName;
 					} else {
-						const [a, d, e, n] = decoded.split("|");
+						const [a, d, e, n, f] = decoded.split("|");
 						if (a) agencyParam = a;
 						if (d) domainParam = d;
 						if (e) employeesParam = e;
 						if (n) nicheParam = n;
+						if (f) firstNameParam = f;
 					}
 
 					// Clean address bar URL seamlessly so presentation URL is 100% clean
@@ -273,6 +278,10 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 				}
 			}
 
+			if (firstNameParam) {
+				setFirstName(firstNameParam.trim());
+			}
+
 			const activeNiche = (nicheParam === "dev" || nicheParam === "design" || nicheParam === "marketing")
 				? nicheParam
 				: "marketing";
@@ -286,9 +295,10 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 				const finalDomain = domainParam ? domainParam.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "") : "";
 				const finalEmployees = employeesParam || "25";
 				const finalNiche = activeNiche;
+				const finalFirstName = firstNameParam ? firstNameParam.trim() : "Jack Sterling";
 
-				if (finalAgency || finalDomain) {
-					const rawToken = `${finalAgency}|${finalDomain}|${finalEmployees}|${finalNiche}`;
+				if (finalAgency || finalDomain || firstNameParam) {
+					const rawToken = `${finalAgency}|${finalDomain}|${finalEmployees}|${finalNiche}|${finalFirstName}`;
 					const token = btoa(encodeURIComponent(rawToken)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 					window.history.replaceState({}, document.title, `${window.location.pathname}?demo=${token}`);
 				}
@@ -487,6 +497,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 				agencyDomain,
 				employeesCount,
 				niche,
+				firstName,
 			}}
 		>
 			{children}

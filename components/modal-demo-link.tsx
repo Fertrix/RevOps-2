@@ -14,6 +14,7 @@ import {
 	UsersIcon,
 	BriefcaseIcon,
 	SparklesIcon,
+	UserIcon,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ export function ModalDemoLink() {
 		agencyDomain,
 		employeesCount,
 		niche,
+		firstName,
 		addLog,
 	} = useAppContext();
 
@@ -33,6 +35,7 @@ export function ModalDemoLink() {
 	const [inputDomain, setInputDomain] = useState("");
 	const [inputEmployees, setInputEmployees] = useState(25);
 	const [inputNiche, setInputNiche] = useState<"dev" | "design" | "marketing">("marketing");
+	const [inputFirstName, setInputFirstName] = useState("Jack Sterling");
 	const [useObfuscatedToken, setUseObfuscatedToken] = useState(true);
 	const [copied, setCopied] = useState(false);
 
@@ -43,9 +46,10 @@ export function ModalDemoLink() {
 			setInputDomain(agencyDomain || "apexmarketing.com");
 			setInputEmployees(employeesCount || 25);
 			setInputNiche(niche || "marketing");
+			setInputFirstName(firstName || "Jack Sterling");
 			setCopied(false);
 		}
-	}, [demoLinkModalOpen, agencyName, agencyDomain, employeesCount, niche]);
+	}, [demoLinkModalOpen, agencyName, agencyDomain, employeesCount, niche, firstName]);
 
 	if (!demoLinkModalOpen) return null;
 
@@ -55,7 +59,7 @@ export function ModalDemoLink() {
 
 	let fullDemoUrl = "";
 	if (useObfuscatedToken) {
-		const rawToken = `${inputAgency.trim()}|${cleanDom}|${inputEmployees}|${inputNiche}`;
+		const rawToken = `${inputAgency.trim()}|${cleanDom}|${inputEmployees}|${inputNiche}|${inputFirstName.trim()}`;
 		const token = btoa(encodeURIComponent(rawToken)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 		fullDemoUrl = `${origin}${pathname}?demo=${token}`;
 	} else {
@@ -64,6 +68,7 @@ export function ModalDemoLink() {
 		if (cleanDom) params.set("domain", cleanDom);
 		if (inputEmployees && inputEmployees !== 25) params.set("employees", inputEmployees.toString());
 		if (inputNiche && inputNiche !== "marketing") params.set("niche", inputNiche);
+		if (inputFirstName.trim()) params.set("firstName", inputFirstName.trim());
 		const queryString = params.toString();
 		fullDemoUrl = `${origin}${pathname}${queryString ? `?${queryString}` : ""}`;
 	}
@@ -136,6 +141,24 @@ export function ModalDemoLink() {
 						/>
 						<span className="text-[10px] text-muted-foreground">
 							Replaces company names in header breadcrumb, sidebar, and summary cards.
+						</span>
+					</div>
+
+					{/* Input 1.5: Executive / User Name */}
+					<div className="flex flex-col gap-1.5">
+						<label className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+							<UserIcon className="size-3.5 text-blue-500" />
+							Executive / User Name (`firstName`)
+						</label>
+						<input
+							type="text"
+							value={inputFirstName}
+							onChange={(e) => setInputFirstName(e.target.value)}
+							placeholder="e.g. Alvaro, Jack Sterling"
+							className="w-full px-3 py-2 bg-muted/30 border rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+						/>
+						<span className="text-[10px] text-muted-foreground">
+							Updates bottom-left CEO profile name and email draft signatures.
 						</span>
 					</div>
 
