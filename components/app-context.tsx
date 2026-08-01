@@ -224,18 +224,48 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			const params = new URLSearchParams(window.location.search);
+
+			let agencyParam = params.get("agency");
+			let domainParam = params.get("domain");
+			let employeesParam = params.get("employees");
+			let nicheParam = params.get("niche");
+
+			const demoToken = params.get("demo") || params.get("d") || params.get("token");
+			if (demoToken) {
+				try {
+					const base64 = demoToken.replace(/-/g, "+").replace(/_/g, "/");
+					const decoded = decodeURIComponent(atob(base64));
+					if (decoded.startsWith("{")) {
+						const json = JSON.parse(decoded);
+						if (json.agency) agencyParam = json.agency;
+						if (json.domain) domainParam = json.domain;
+						if (json.employees) employeesParam = json.employees.toString();
+						if (json.niche) nicheParam = json.niche;
+					} else {
+						const [a, d, e, n] = decoded.split("|");
+						if (a) agencyParam = a;
+						if (d) domainParam = d;
+						if (e) employeesParam = e;
+						if (n) nicheParam = n;
+					}
+
+					// Clean address bar URL seamlessly so presentation URL is 100% clean
+					if (window.history.replaceState) {
+						window.history.replaceState({}, document.title, window.location.pathname);
+					}
+				} catch (e) {
+					console.warn("Could not decode demo token", e);
+				}
+			}
 			
-			const agencyParam = params.get("agency");
 			if (agencyParam) {
 				setAgencyName(agencyParam.trim());
 			}
 
-			const domainParam = params.get("domain");
 			if (domainParam) {
 				setAgencyDomain(domainParam.trim());
 			}
 
-			const employeesParam = params.get("employees");
 			if (employeesParam) {
 				const val = parseInt(employeesParam, 10);
 				if (!isNaN(val) && val > 0) {
@@ -243,7 +273,6 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 				}
 			}
 
-			const nicheParam = params.get("niche");
 			const activeNiche = (nicheParam === "dev" || nicheParam === "design" || nicheParam === "marketing")
 				? nicheParam
 				: "marketing";

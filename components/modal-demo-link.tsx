@@ -33,6 +33,7 @@ export function ModalDemoLink() {
 	const [inputDomain, setInputDomain] = useState("");
 	const [inputEmployees, setInputEmployees] = useState(25);
 	const [inputNiche, setInputNiche] = useState<"dev" | "design" | "marketing">("marketing");
+	const [useObfuscatedToken, setUseObfuscatedToken] = useState(true);
 	const [copied, setCopied] = useState(false);
 
 	// Sync local form state when modal opens
@@ -48,19 +49,24 @@ export function ModalDemoLink() {
 
 	if (!demoLinkModalOpen) return null;
 
-	// Construct dynamic query string
-	const params = new URLSearchParams();
-	if (inputAgency.trim()) params.set("agency", inputAgency.trim());
-	if (inputDomain.trim()) params.set("domain", inputDomain.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, ""));
-	if (inputEmployees && inputEmployees !== 25) params.set("employees", inputEmployees.toString());
-	if (inputNiche && inputNiche !== "marketing") params.set("niche", inputNiche);
-
-	const queryString = params.toString();
-	
-	// Get current origin safely
+	const cleanDom = inputDomain.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
 	const origin = typeof window !== "undefined" ? window.location.origin : "https://sentinel-revops.vercel.app";
 	const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
-	const fullDemoUrl = `${origin}${pathname}${queryString ? `?${queryString}` : ""}`;
+
+	let fullDemoUrl = "";
+	if (useObfuscatedToken) {
+		const rawToken = `${inputAgency.trim()}|${cleanDom}|${inputEmployees}|${inputNiche}`;
+		const token = btoa(encodeURIComponent(rawToken)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+		fullDemoUrl = `${origin}${pathname}?demo=${token}`;
+	} else {
+		const params = new URLSearchParams();
+		if (inputAgency.trim()) params.set("agency", inputAgency.trim());
+		if (cleanDom) params.set("domain", cleanDom);
+		if (inputEmployees && inputEmployees !== 25) params.set("employees", inputEmployees.toString());
+		if (inputNiche && inputNiche !== "marketing") params.set("niche", inputNiche);
+		const queryString = params.toString();
+		fullDemoUrl = `${origin}${pathname}${queryString ? `?${queryString}` : ""}`;
+	}
 
 	const handleCopy = () => {
 		navigator.clipboard.writeText(fullDemoUrl);
@@ -228,8 +234,29 @@ export function ModalDemoLink() {
 						</div>
 					</div>
 
+					{/* URL Mode Toggle: Encrypted Token vs Raw Params */}
+					<div className="flex items-center justify-between p-2.5 bg-muted/20 border rounded-lg mt-1">
+						<div className="flex flex-col">
+							<span className="font-semibold text-foreground text-[11px]">
+								{useObfuscatedToken ? "🛡️ Encrypted Demo Token (?demo=...)" : "📄 Raw Parameters (?agency=...)"}
+							</span>
+							<span className="text-[10px] text-muted-foreground">
+								{useObfuscatedToken ? "Obfuscates agency details into a clean token & clears address bar on load." : "Visible readable parameter keys."}
+							</span>
+						</div>
+						<Button
+							type="button"
+							size="sm"
+							variant="outline"
+							onClick={() => setUseObfuscatedToken(!useObfuscatedToken)}
+							className="h-7 text-[10px] font-semibold px-2.5"
+						>
+							{useObfuscatedToken ? "Show Raw" : "Encrypt Token"}
+						</Button>
+					</div>
+
 					{/* Live URL Output Preview Box */}
-					<div className="flex flex-col gap-1.5 mt-2">
+					<div className="flex flex-col gap-1.5 mt-1">
 						<span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
 							Generated Demo URL Preview
 						</span>
