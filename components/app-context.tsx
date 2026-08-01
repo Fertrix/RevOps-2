@@ -279,6 +279,21 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 			
 			setNiche(activeNiche);
 
+			// AUTO-ENCRYPT & CLEAN URL BAR:
+			// If loaded with raw params (?agency=...), automatically convert browser address bar to ?demo=TOKEN!
+			if (window.history.replaceState) {
+				const finalAgency = agencyParam ? agencyParam.trim() : "";
+				const finalDomain = domainParam ? domainParam.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "") : "";
+				const finalEmployees = employeesParam || "25";
+				const finalNiche = activeNiche;
+
+				if (finalAgency || finalDomain) {
+					const rawToken = `${finalAgency}|${finalDomain}|${finalEmployees}|${finalNiche}`;
+					const token = btoa(encodeURIComponent(rawToken)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+					window.history.replaceState({}, document.title, `${window.location.pathname}?demo=${token}`);
+				}
+			}
+
 			setLeaks((prev) =>
 				prev.map((l) => {
 					if (l.id === "L1") {
